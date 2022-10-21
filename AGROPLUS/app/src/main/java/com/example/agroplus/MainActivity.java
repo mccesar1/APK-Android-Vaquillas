@@ -1,7 +1,15 @@
 package com.example.agroplus;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
@@ -13,6 +21,7 @@ import android.widget.Toast;
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,7 +34,74 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //create folder in android/data
+        //createFolder();
+        commonDocumentDirPath();
+        verifyStoragePermissions(this);
 
+
+
+    }
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+
+            );
+        }
+    }
+
+
+    public   File commonDocumentDirPath(){
+        File dir = null ;
+        String folder_main = "/com.example.agroplus";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            dir = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main );
+            // dir = new File(Environment.getExternalStorageDirectory() + folder_main);
+            dir.mkdir();
+        } else {
+            dir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) + folder_main);
+            dir.mkdir();
+        }
+        return  dir ;
+    }
+
+    //String ruta = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main;
+    public void createFolder(){
+        String folder_main = "com.example.agroplus";
+
+        File folder = new File(Environment.getExternalStorageDirectory() + "/Android/data/"+folder_main);
+
+
+        String ruta = Environment.getExternalStorageDirectory() + "/Android/data/com.example.agroplus";
+        boolean success = true;
+        if (!folder.exists()) {
+            success = folder.mkdirs();
+        }
+        if (success) {
+            Toast.makeText(this, "Carpeta creada", Toast.LENGTH_SHORT).show();
+        } else  {
+            Toast.makeText(this, "Carpeta no creada " + ruta, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onClickVCS(View view) {
@@ -185,44 +261,68 @@ public class MainActivity extends AppCompatActivity {
         txtDatos.setText("Mensajes");
     }
 
-    //read CSV file
-    public void readCSV(View view) {
-        TextView txtDatos = findViewById(R.id.txtDatos);
-        txtDatos.setText("VACAS");
 
+    public void readCSV(View view) { TextView txtDatos = findViewById(R.id.txtDatos);
+        txtDatos.setText("VACAS");
         TextView editTxtNum = findViewById(R.id.editTxtNum);
         TextView txtToros = findViewById(R.id.txtToros);
         TextView txtDatos2 = findViewById(R.id.textView7);
-        //String csvFile ="/vacas.csv";
-        InputStream csvFile = getResources().openRawResource(R.raw.vacas);
-        //System.out.println(Environment.getExternalStorageDirectory().toString() );
+        //------------------------------------------
+        //  String folder_main = "/com.example.agroplus/";
+        //  String basePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main;
+        String folder_main = "/com.example.agroplus/";
+        String basePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main;
+
+
+        //String cvsFile ="Documents/com.example.agroplus/vacas.csv";
         BufferedReader br = null;//read file
         String line = "";//line
         String cvsSplitBy = ",";//split by comma
         txtToros.setText("");
-        txtDatos2.setText("No encontrado");
-        try {
-            br = new BufferedReader(new InputStreamReader(csvFile)); //read CSV file
-            while ((line = br.readLine()) != null) {// read line by line
-           // br.readLine()
+        txtDatos2.setText("Datos no localizados");
 
-                // use comma as separator
+        File dir = commonDocumentDirPath();
+        // String csvFile =basePath +"vacas.csv";
+        String csvFile =dir +"/vacas.csv";
+
+
+        File file = new File(dir, "VACAS.csv");
+        System.out.println(dir);
+        if (file.exists()) {
+            System.out.println("File exists");
+        } else {
+            System.out.println("File does not exist");
+        }
+
+        try {
+            br = new BufferedReader(new FileReader(csvFile));
+            // System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+            while ((line = br.readLine()) != null) {// read line by line
                 String[] country = line.split(cvsSplitBy); //split line by comma
                 if (country[0].equals(editTxtNum.getText().toString())) {//if the first column of the CSV file is equal to the number entered
                     txtToros.setText(country[1]+"   "+country[2]+"\n"+country[3]+"   "+country[4]+"\n"+country[5]+"   "+country[6]);//set the second column of the CSV file to the text view
-                    //txtToros.setText(country[2]);//set the second column of the CSV file to the text view
                     txtDatos2.setText("Datos localizados");
+                    MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.loc);
+                    mediaPlayer2.start();
                 }else if(country[0].equals("")) {
                     txtDatos2.setText("Datos no localizados");
                     txtToros.setText("");
                 }
             }
+            if (txtDatos2.getText().toString().equals("Datos no localizados")) {
+                MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.noloc);
+                mediaPlayer2.start();
+            }
         } catch (FileNotFoundException e) {//catch exception
             e.printStackTrace();//print exception
-            Toast.makeText(this, "Archivo no encontrado"+ csvFile, Toast.LENGTH_SHORT).show();//show message
+            Toast.makeText(this, "Archivo no localizado: "+  csvFile, Toast.LENGTH_LONG).show();//show message
+            MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.filenot);
+            mediaPlayer2.start();
         } catch (IOException e) {//catch exception
             e.printStackTrace();//print exception
             Toast.makeText(this, "Error de lectura"+ csvFile, Toast.LENGTH_SHORT).show();//show message
+            MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.filenot);
+            mediaPlayer2.start();
         } finally {
             if (br != null) {
                 try {
@@ -232,46 +332,66 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
+
 
     public void readCSVaquillas(View view) {
+       // MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.busc);
+        //mediaPlayer.start();
         TextView txtDatos = findViewById(R.id.txtDatos);
         txtDatos.setText("VAQUILLAS");
-
         TextView editTxtNum = findViewById(R.id.editTxtNum);
         TextView txtToros = findViewById(R.id.txtToros);
         TextView txtDatos2 = findViewById(R.id.textView7);
-        //String csvFile ="/vacas.csv";
-        InputStream csvFile = getResources().openRawResource(R.raw.vacas);
-        //System.out.println(Environment.getExternalStorageDirectory().toString() );
+        //------------------------------------------
+      //  String folder_main = "/com.example.agroplus/";
+      //  String basePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main;
+        String folder_main = "/com.example.agroplus/";
+        String basePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)+ folder_main;
+
+
+        //String cvsFile ="Documents/com.example.agroplus/vacas.csv";
         BufferedReader br = null;//read file
         String line = "";//line
         String cvsSplitBy = ",";//split by comma
         txtToros.setText("");
-        txtDatos2.setText("No encontrado");
-        try {
-            br = new BufferedReader(new InputStreamReader(csvFile)); //read CSV file
-            while ((line = br.readLine()) != null) {// read line by line
-                // br.readLine()
+        txtDatos2.setText("Datos no localizados");
 
-                // use comma as separator
+        File dir = commonDocumentDirPath();
+       // String csvFile =basePath +"vacas.csv";
+        String csvFile =dir +"/VAQUILLAS.csv";
+
+
+
+        try {
+           br = new BufferedReader(new FileReader(csvFile));
+           // System.out.println("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW");
+            while ((line = br.readLine()) != null) {// read line by line
                 String[] country = line.split(cvsSplitBy); //split line by comma
                 if (country[0].equals(editTxtNum.getText().toString())) {//if the first column of the CSV file is equal to the number entered
                     txtToros.setText(country[1]+"   "+country[2]+"\n"+country[3]+"   "+country[4]+"\n"+country[5]+"   "+country[6]);//set the second column of the CSV file to the text view
-                    //txtToros.setText(country[2]);//set the second column of the CSV file to the text view
                     txtDatos2.setText("Datos localizados");
+                    MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.loc);
+                    mediaPlayer2.start();
                 }else if(country[0].equals("")) {
                     txtDatos2.setText("Datos no localizados");
                     txtToros.setText("");
                 }
             }
+            if (txtDatos2.getText().toString().equals("Datos no localizados")) {
+                MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.noloc);
+                mediaPlayer2.start();
+            }
         } catch (FileNotFoundException e) {//catch exception
             e.printStackTrace();//print exception
-            Toast.makeText(this, "Archivo no encontrado"+ csvFile, Toast.LENGTH_SHORT).show();//show message
+            Toast.makeText(this, "Archivo no localizado: "+  csvFile, Toast.LENGTH_LONG).show();//show message
+            MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.filenot);
+            mediaPlayer2.start();
         } catch (IOException e) {//catch exception
             e.printStackTrace();//print exception
             Toast.makeText(this, "Error de lectura"+ csvFile, Toast.LENGTH_SHORT).show();//show message
+            MediaPlayer mediaPlayer2 = MediaPlayer.create(this, R.raw.filenot);
+            mediaPlayer2.start();
         } finally {
             if (br != null) {
                 try {
@@ -281,8 +401,17 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
+    //play mp3 file
+    public void playMp3(View view) {
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.button);
+        mediaPlayer.start();
+    }
+
+    //read cvs from documents folder in phone storage
+
+
+
 
 
 }
