@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "197665524101",
+    "project_id": "agroplusfirebase",
+    "storage_bucket": "agroplusfirebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197665524101:android:c72155a0cbf7e98fcb9cec",
+        "android_client_info": {
+          "package_name": "com.example.agroplusfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197665524101-hk396464tfsnfo9dgb617dcnk7t8kvib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-5HVUdVqiMtj-Xk7tWTWp7c-c5wLefzk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197665524101-hk396464tfsnfo9dgb617dcnk7t8kvib.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

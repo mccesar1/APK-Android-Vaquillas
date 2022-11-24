@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "264660065679",
+    "project_id": "agroplus-el-principal",
+    "storage_bucket": "agroplus-el-principal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264660065679:android:795d380b5e71fac8fabffa",
+        "android_client_info": {
+          "package_name": "com.example.agropluselprincipal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "264660065679-o8eskfmptnfln168ss020uha69tuhp77.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZruekshnSGT8Ct8scMJUO1I6_A0TE7-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "264660065679-o8eskfmptnfln168ss020uha69tuhp77.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

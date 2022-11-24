@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "29328055694",
+    "project_id": "agroplus-la-granja",
+    "storage_bucket": "agroplus-la-granja.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:29328055694:android:d991030ae5d339f1d598df",
+        "android_client_info": {
+          "package_name": "com.example.agropluslagranja"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "29328055694-ifo01ppitn7bchb8fiml87t2kk54tgtb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvuWC1uaGNUOXJlfvKmqx1nuwD9BKEGSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "29328055694-ifo01ppitn7bchb8fiml87t2kk54tgtb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
